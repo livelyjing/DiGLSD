@@ -1,4 +1,3 @@
-import directed_multisignal as dm
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,52 +13,32 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
-def optimize_multisignal(X,a,B, gamma1=10, gamma2=0.5):
-    N = len(s)
-    n = len(s[1])
+def optimize_multisignal(X,B, gamma1=10, gamma2=0.5):
+    N = len(X)
+    #Initialize the weighted adjacency matrix W as a cvxpy variable.
     W = cp.Variable((N,N))
-    #To make W be only 1s and 0s (like for unweighted graph) do W = cp.Variable((N, N), boolean=True)
+    #Set the constraints on W.
     con = [cp.diag(W)==0, W>=0, cp.sum(W,axis=1)==1]
-    #NormW = N*cp.inv_pos(cp.trace(W))*W
-    
-    arg2 = 0
+
+    #Construct the Directed Dirchelet Energy Term
+    Z = np.empty((N,N))
     for i in range(N):
-        arg2 += cp.log(cp.sum(W[i]))
-
-    arg3 = cp.norm(W, 'fro')**2
-
-    J = np.ones((N,1))
-    arg4 = cp.norm(W@J, 2)**2
-
-    Z3 = np.empty((N,N))
-    for i in range(N):
-        for j in range(N):
-            #another idea: base Zij on the angle and magnitude of the signal vectors
-            #so we want (xi dot xj)//||xj|| to be small
-            
-            m1 = np.average(X[i])
-            m2 = np.average(X[j])
-            sign = np.sign(m1-m2)
-            
-
-            #v = sign*( (np.dot(s[i],s[j])/(np.linalg.norm(s[j])**2)) -1)
+        for j in range(N): 
             v = np.average(X[i]-X[j])
-            #v2 = (np.dot(s[i]-s[j],np.ones(n)))/(np.dot(cp.abs(s[i]-s[j]),np.ones(n)))*(np.linalg.norm(s[i]-s[j]))
-            Z3[i][j] = np.abs(min(gamma1*v, gamma2*v))
+            Z[i][j] = np.abs(min(gamma1*v, gamma2*v))
+    WZ = cp.sum(cp.multiply(W,Z))
 
+    #Construct the sparsity terms
+    arg1 = cp.norm(W, 'fro')**2
+    J = np.ones((N,1))
+    arg2 = cp.norm(W@J, 2)**2
 
-    WZ3 = cp.sum(cp.multiply(W,Z3))
-    print(f"Z is \n{np.round(prune(Z3,1e-5), 2)}\n")
-
-    # arg4 = 0
-    # for i in range(N):
-    #     for j in range(N):
-    #         if W[i][j]>=0: arg4+=1
-
-
-    sum = - a*arg2 + ((N-2)/2)*B*(arg3) + (1/(2*N-2))*B*arg4  + WZ3
+    #Combine terms to define the objective function
+    #Input function into CVXPY to solve
+    sum = WZ + ((N-2)/2)*B*(arg1) + (1/(2*N-2))*B*arg2
     obj = cp.Minimize(sum)
     prob = cp.Problem(obj, con)
     prob.solve()
-    print(f"W is \n{np.round(W.value,2)}\n")
+
+    #Prune the matrix that is found as the solution
     return prune(W.value, 1e-6)
