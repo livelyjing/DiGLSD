@@ -18,7 +18,7 @@ def optimize_multisignal(X,B, gamma1=10, gamma2=0.5):
     #Set the constraints on W.
     con = [cp.diag(W)==0, W>=0, cp.sum(W,axis=1)==1]
 
-    #Construct the Directed Dirchelet Energy Term
+    #Construct the Directed Dirichlet Energy Term
     Z = np.empty((N,N))
     for i in range(N):
         for j in range(N): 
