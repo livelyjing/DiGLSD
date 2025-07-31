@@ -13,6 +13,5 @@ Smoothness and Perseus Measure for a given directed graph and learned graph alon
 ## Getting Started
 
 * This package was built in Python 3.9
-* CVXPY: Used for solving Step 1 of GL_Reg algorithm.
-* NetworkX: Used for generating synthetic signal data and graphs.
-  
+* CVXPY: Used for solving the optimization algorithm.
+
