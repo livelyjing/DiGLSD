@@ -53,7 +53,7 @@ def optimize_multisignal(s,a,B, gamma1, gamma2):
     sum = - a*arg2 + ((N-2)/2)*B*(arg3) + (1/(2*N-2))*B*arg4  + WZ3
     obj = cp.Minimize(sum)
     prob = cp.Problem(obj, con)
-    prob.solve(solver="CLARABEL")
+    prob.solve()
     #print(f"W is \n{np.round(W.value,2)}\n")
     return prune(W.value, 1e-6)
 
