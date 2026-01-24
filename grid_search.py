@@ -2,6 +2,7 @@ import networkx as nx
 import HierarchyGraph as hg
 import numpy as np
 import cvxpy as cp
+import csv
 
 def prune(L, threshold):
     temp = L.copy()
@@ -44,26 +45,27 @@ def optimize_multisignal(s,a,B, gamma1, gamma2):
     sum = - a*arg2 + ((N-2)/2)*B*(arg3) + (1/(2*N-2))*B*arg4  + WZ3
     obj = cp.Minimize(sum)
     prob = cp.Problem(obj, con)
-    prob.solve()
+    prob.solve(solver='CLARABEL')
     return prune(W.value, 1e-6)
 
 #Grid search ahead of time the best hyper params
 grid_search=dict()
 print("begin grid search.")
+output=[['Num nodes','alpha','beta','gamma1','gamma2', 'average f1 over 50 runs']]
 
-for N in [10,15,20,25,30,35,40,45,50]:
+for N in [10,15,20,25]: #,30,35,40,45,50
     a_opt = None
     b_opt = None
     g1_opt = None
     g2_opt = None
     f1_opt=0
-
-    #test every possible alpha,beta,gamma1,gamma2, combination
-    for a in np.arange(0, 1, 0.5):
-        for b in np.arange(0,0.5,0.1):
-            for gamma1 in np.arange(0,0.5,0.1):
-                for gamma2 in np.arange(0,0.5,0.1):
-
+    print(N)
+    #test possible alpha,beta,gamma1,gamma2, combinations
+    for a in np.arange(0, 2, 0.1):
+        for b in np.arange(0,0.5,0.01):
+            for gamma1 in np.arange(5,10,1):
+                for gamma2 in np.arange(0.1,0.8,0.1):
+                    #print(f"{N,a,b,gamma1,gamma2}")
                     #Find average f1 score over 50 runs
                     f1_score_sum=0
                     for i in range(50):
@@ -72,9 +74,6 @@ for N in [10,15,20,25,30,35,40,45,50]:
                         sigma_e = 0.05
                         mu = 10
                         m = 3
-
-                        gamma1=10
-                        gamma2=0.5
 
                         #Make the graph+signals, then learn it
                         G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
@@ -102,10 +101,17 @@ for N in [10,15,20,25,30,35,40,45,50]:
                             f1=0
                         
                         f1_score_sum+=f1
-                        
+
                     if f1_score_sum/50 >f1_opt:
                         f1_opt=f1_score_sum/50
                         a_opt, b_opt, g1_opt, g2_opt = a,b,gamma1,gamma2
+                    output.append([N,a,b,gamma1,gamma2, f1_score_sum/50])
     grid_search[N] = (a_opt,b_opt,g1_opt,g2_opt, f1_opt)
 
 print(grid_search)
+output.append(['Optimal vals below'])
+for N in [10,15,20,25,30,35,40,45,50]: output.append([a_opt,b_opt,g1_opt,g2_opt, f1_opt])
+
+with open('grid_search.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(output)
