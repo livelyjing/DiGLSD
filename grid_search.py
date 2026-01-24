@@ -61,11 +61,11 @@ for N in [10,15,20,25]: #,30,35,40,45,50
     f1_opt=0
     print(N)
     #test possible alpha,beta,gamma1,gamma2, combinations
-    for a in np.arange(0, 2, 0.1):
-        for b in np.arange(0,0.5,0.01):
-            for gamma1 in np.arange(5,10,1):
-                for gamma2 in np.arange(0.1,0.8,0.1):
-                    #print(f"{N,a,b,gamma1,gamma2}")
+    for a in np.arange(0, 1.5, 0.2):
+        for b in np.arange(0,0.5,0.05):
+            for gamma1 in np.arange(9,12,1):
+                for gamma2 in np.arange(0.4,0.7,0.1):
+                    print(f"{N,a,b,gamma1,gamma2}")
                     #Find average f1 score over 50 runs
                     f1_score_sum=0
                     for i in range(50):
@@ -110,7 +110,9 @@ for N in [10,15,20,25]: #,30,35,40,45,50
 
 print(grid_search)
 output.append(['Optimal vals below'])
-for N in [10,15,20,25,30,35,40,45,50]: output.append([a_opt,b_opt,g1_opt,g2_opt, f1_opt])
+for N in [10,15,20,25]: 
+    (a_opt,b_opt,g1_opt,g2_opt, f1_opt) = grid_search[N]
+    output.append([N,a_opt,b_opt,g1_opt,g2_opt, f1_opt])
 
 with open('grid_search.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
