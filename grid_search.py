@@ -53,7 +53,7 @@ grid_search=dict()
 print("begin grid search.")
 output=[['Num nodes','alpha','beta','gamma1','gamma2', 'average f1 over 50 runs']]
 
-for N in [10,15,20,25]: #,30,35,40,45,50
+for N in [30,35,40,45,50]:
     a_opt = None
     b_opt = None
     g1_opt = None
@@ -61,7 +61,7 @@ for N in [10,15,20,25]: #,30,35,40,45,50
     f1_opt=0
     print(N)
     #test possible alpha,beta,gamma1,gamma2, combinations
-    for a in np.arange(0, 1.5, 0.2):
+    for a in np.arange(0, 1.3, 0.2):
         for b in np.arange(0,0.5,0.05):
             for gamma1 in np.arange(9,12,1):
                 for gamma2 in np.arange(0.4,0.7,0.1):
@@ -110,7 +110,7 @@ for N in [10,15,20,25]: #,30,35,40,45,50
 
 print(grid_search)
 output.append(['Optimal vals below'])
-for N in [10,15,20,25]: 
+for N in [30,35,40,45,50]: 
     (a_opt,b_opt,g1_opt,g2_opt, f1_opt) = grid_search[N]
     output.append([N,a_opt,b_opt,g1_opt,g2_opt, f1_opt])
 
