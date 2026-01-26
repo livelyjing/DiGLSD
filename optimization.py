@@ -11,12 +11,12 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
-def optimize_multisignal(X,B, gamma1=10, gamma2=0.5):
+def optimize_multisignal(X,A, B, gamma1, gamma2):
     N = len(X)
     #Initialize the weighted adjacency matrix W as a cvxpy variable.
     W = cp.Variable((N,N))
     #Set the constraints on W.
-    con = [cp.diag(W)==0, W>=0, cp.sum(W,axis=1)==1]
+    con = [cp.diag(W)==0, W>=0]
 
     #Construct the Directed Dirichlet Energy Term
     Z = np.empty((N,N))
@@ -27,16 +27,21 @@ def optimize_multisignal(X,B, gamma1=10, gamma2=0.5):
     WZ = cp.sum(cp.multiply(W,Z))
 
     #Construct the sparsity terms
-    arg1 = cp.norm(W, 'fro')**2
+    arg2 = 0
+    for i in range(N):
+        arg2 += cp.log(cp.sum(W[i]))
+    
+    arg3 = cp.norm(W, 'fro')**2
+
     J = np.ones((N,1))
-    arg2 = cp.norm(W@J, 2)**2
+    arg4 = cp.norm(W@J, 2)**2
 
     #Combine terms to define the objective function
     #Input function into CVXPY to solve
-    sum = WZ + ((N-2)/2)*B*(arg1) + (1/(2*N-2))*B*arg2
+    sum = WZ - A*arg2 + ((N-2)/2)*B*(arg3) + (1/(2*N-2))*B*arg4
     obj = cp.Minimize(sum)
     prob = cp.Problem(obj, con)
-    prob.solve()
+    prob.solve(solver='CLARABEL')
 
     #Prune the matrix that is found as the solution
     return prune(W.value, 1e-6)
