@@ -2,7 +2,7 @@ import numpy as np
 import cvxpy as cp
 
 # The prune function replaces every element of the matrix smaller than the 
-# threshold with o
+# threshold with 0
 def prune(L, threshold):
     temp = L.copy()
     for i in range(len(temp)):
