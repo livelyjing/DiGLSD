@@ -1,4 +1,3 @@
-
 import dong_code_python as dg
 import HierarchyGraph as hg
 import numpy as np
@@ -36,7 +35,9 @@ smooth = []
 for _ in range(5):
     N=20
 
-    param = {'N':N, 'max_iter':100, 'alpha':0.0032, 'beta':0.1}
+    #In "Learning Laplacian Matrix in Smooth Graph Signal Representations"
+    # these are the alpha,beta vals used for Barabási–Albert graphs: 0.0025, 0.050
+    param = {'N':N, 'max_iter':100, 'alpha':0.0025, 'beta':0.05}#'alpha':0.0032, 'beta':0.1
     G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
 
     A = prune(dg.graph_learning_gaussian(s, param)[0],1e-6)
