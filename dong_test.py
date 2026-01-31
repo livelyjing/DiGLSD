@@ -28,6 +28,8 @@ mu = 10
 m = 3
 
 f1_scores=[]
+precision_list=[]
+recall_list=[]
 h_dists = []
 smooth = []
 
@@ -44,8 +46,7 @@ for _ in range(5):
     
     G_new = nx.DiGraph(A)
 
-    #Calculate f1 score. Because its an undirected graph its directed version has edges going both ways. 
-    # If (i,j) is in E_original, does it count towards false positives if learned graph has (i,j) and (j,i)
+    #Calculate f1 score. 
     TP = 0
     FN = 0
     FP = 0
@@ -54,17 +55,30 @@ for _ in range(5):
             TP+=1
         else:
             FN+=1
+    # Because its an undirected graph its directed version has edges going both ways. 
+    # If (i,j) is in E_original, does it count towards false positives if learned graph has (i,j) and (j,i)
     for (i,j) in G_new.edges:
         if (i,j) not in G.edges:
             FP+=1
+        #check for potentially fake false positives
+        # if (j,i) in G.edges and (j,i) in G_new.edges:
+        #     FP-=1
+    
     f1= (2*TP)/((2*TP) + FP + FN)
+    prec = TP/(TP+FP)
+    rec = TP/(TP+FN)
+
     f1_scores.append(f1)
+    precision_list.append(prec)
+    recall_list.append(rec)
     h_dists.append(hamming(nx.to_numpy_array(G),A))
     smooth.append(ev.smoothness(G_new,s))
 
 f1_avg = np.average(f1_scores)
+f1_std = np.std(f1_scores)
+prec_avg = np.average(precision_list)
+rec_avg = np.average(recall_list)
 h_avg = np.average(h_dists)
 smooth_avg = np.average(smooth)
 
-print(f1_avg,h_avg, smooth_avg)
-    
+print(f"f1 avg:{f1_avg}, f1_std:{f1_std}, precision:{prec_avg}, recall:{rec_avg}, shd avg:{h_avg}, smooth avg:{smooth_avg}")
