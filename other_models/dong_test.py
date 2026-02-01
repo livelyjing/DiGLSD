@@ -16,15 +16,6 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
-def hamming(A1,A2):
-    n = len(A1)
-    h = 0
-    for i in range(n):
-        for j in range(n):
-            if A1[i][j]!=0 and A2[i][j]!=0: h+=1
-    return h
-
-
 q_e = 2
 sigma_e = 0.05
 mu = 10
@@ -82,7 +73,7 @@ for _ in range(5):
     f1_scores.append(f1)
     precision_list.append(prec)
     recall_list.append(rec)
-    h_dists.append(hamming(nx.to_numpy_array(G),A))
+    h_dists.append(ev.hamming(nx.to_numpy_array(G),A))
     smooth.append(ev.smoothness(G_new,s))
 
 f1_avg = np.average(f1_scores)

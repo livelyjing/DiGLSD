@@ -54,15 +54,6 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
-def hamming(A1,A2):
-    if np.shape(A1)!=np.shape(A2): raise Exception("Matrix size mismatch")
-    n = len(A1)
-    h = 0
-    for i in range(n):
-        for j in range(n):
-            if A1[i][j]!=0 and A2[i][j]!=0: h+=1
-    return h
-
 N=20
 q_e = 2
 sigma_e = 0.05
@@ -113,7 +104,7 @@ for i in range(50):
     f1_scores.append(f1)
     precision_list.append(prec)
     recall_list.append(rec)
-    h_dists.append(hamming(nx.to_numpy_array(G),A))
+    h_dists.append(ev.hamming(nx.to_numpy_array(G),A))
     smooth.append(ev.smoothness(G_new,s))
     pers.append(ev.Perseus_Measure(G_new,s))
 

@@ -22,6 +22,17 @@ def Perseus_Measure(G,X):
             res += max(0, np.sign(v[k]-s[k]))
     return res/len(G.edges)
 
+#Returns the Structural Hamming Distance between two Adj Matrices
+def hamming(A1,A2):
+    if np.shape(A1)!=np.shape(A2): raise Exception("Matrix size mismatch")
+    n = len(A1)
+    h = 0
+    for i in range(n):
+        for j in range(n):
+            if A1[i][j]!=0 and A2[i][j]==0: h+=1
+            elif A1[i][j]==0 and A2[i][j]!=0: h+=1
+    return h
+
 #Takes in the ground truths graph G, the signal matrix X, the learned graph G_2,  
 #and returns measures of learning performance as a zipped vector
 def Graph_Compare(G,G_2, X):
