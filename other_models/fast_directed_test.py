@@ -1,9 +1,50 @@
-import dong_code_python as dg
+import sys
+sys.path.append("..")
 import HierarchyGraph as hg
+import Eval_Metrics as ev
 import numpy as np
 import networkx as nx
-import Eval_Metrics as ev
 import matplotlib.pyplot as plt
+
+
+
+
+def makeZ(X,N):
+    res = []
+    for i in range(N):
+        for j in range(N):
+            if i==j: continue
+            else: res.append(np.sqrt(np.sum( (X[i]-X[j])**2) ) )
+    return np.transpose(np.array(res))
+
+def karaesi(a,b,z,N):
+    J=np.ones((1,N-1))
+    A = np.kron(np.identity(N),J)
+    eta = N-2
+    mu = 1/(N-1)
+
+    t = (-mu/np.sqrt(b))*A@z
+    d = (1/2)*(t+np.sqrt(t**2 + 4*a))
+    error = 1e5
+    while error>=1e-5:
+        p = np.array([1/x for x in d])
+
+        t = mu*A@np.maximum( np.transpose(A)@(mu*d-a*p) , -(1/np.sqrt(b))*z)
+        d_new = (1/2)*(t+np.sqrt(t**2 + 4*a))
+        error = np.linalg.norm(d_new-d)
+        d = d_new
+    w = (1/eta*np.sqrt(b))*np.maximum(np.zeros((N*(N-1))), -(1/np.sqrt(b))*z - np.transpose(A)@(mu*d-a*p))
+
+    res = np.zeros((N,N))
+    count = 0
+    for i in range(N):
+        for j in range(N):
+            if i==j: continue
+            else:
+                res[i][j] = w[count]
+                count += 1
+
+    return res
 
 def prune(L, threshold):
     temp = L.copy()
@@ -14,6 +55,7 @@ def prune(L, threshold):
     return(temp)
 
 def hamming(A1,A2):
+    if np.shape(A1)!=np.shape(A2): raise Exception("Matrix size mismatch")
     n = len(A1)
     h = 0
     for i in range(n):
@@ -21,7 +63,7 @@ def hamming(A1,A2):
             if A1[i][j]!=0 and A2[i][j]!=0: h+=1
     return h
 
-
+N=20
 q_e = 2
 sigma_e = 0.05
 mu = 10
@@ -32,21 +74,18 @@ precision_list=[]
 recall_list=[]
 h_dists = []
 smooth = []
+pers = []
 
-#Find avg f1-score and hamming dist over 5 runs
-for _ in range(5):
-    N=20
 
-    #In "Learning Laplacian Matrix in Smooth Graph Signal Representations"
-    # these are the alpha,beta vals used for Barabási–Albert graphs: 0.0025, 0.050
-    param = {'N':N, 'max_iter':100, 'alpha':0.0025, 'beta':0.05}#'alpha':0.0032, 'beta':0.1
+for i in range(50):
     G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
-
-    A = prune(dg.graph_learning_gaussian(s, param)[0],1e-6)
-    #For some reason the graph has self loops, so we delete them
-    for i in range(N): A[i][i]=0
     
-    G_new = nx.DiGraph(A)
+    z = makeZ(s,N)
+
+    a=5
+    b=0.54
+    A = prune(karaesi(a,b,z, N),1e-6)
+    G_new = nx.from_numpy_array(A, create_using=nx.DiGraph)
 
     # plt.figure("Original Graph")
     # nx.draw(G,pos=nx.circular_layout(G))
@@ -63,14 +102,9 @@ for _ in range(5):
             TP+=1
         else:
             FN+=1
-    # Because its an undirected graph its directed version has edges going both ways. 
-    # If (i,j) is in E_original, does it count towards false positives if learned graph has (i,j) and (j,i)
     for (i,j) in G_new.edges:
         if (i,j) not in G.edges:
             FP+=1
-        #check for potentially fake false positives
-        # if (j,i) in G.edges and (j,i) in G_new.edges:
-        #     FP-=1
     
     f1= (2*TP)/((2*TP) + FP + FN)
     prec = TP/(TP+FP)
@@ -81,6 +115,7 @@ for _ in range(5):
     recall_list.append(rec)
     h_dists.append(hamming(nx.to_numpy_array(G),A))
     smooth.append(ev.smoothness(G_new,s))
+    pers.append(ev.Perseus_Measure(G_new,s))
 
 f1_avg = np.average(f1_scores)
 f1_std = np.std(f1_scores)
@@ -88,5 +123,6 @@ prec_avg = np.average(precision_list)
 rec_avg = np.average(recall_list)
 h_avg = np.average(h_dists)
 smooth_avg = np.average(smooth)
+pers_avg = np.average(pers)
 
-print(f"f1 avg:{f1_avg}, f1_std:{f1_std}, precision:{prec_avg}, recall:{rec_avg}, shd avg:{h_avg}, smooth avg:{smooth_avg}")
+print(f"f1 avg:{f1_avg}, f1_std:{f1_std}, precision:{prec_avg}, recall:{rec_avg}, shd avg:{h_avg}, smooth avg:{smooth_avg}, pers avg:{pers_avg}")
