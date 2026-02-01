@@ -41,7 +41,7 @@ def optimize_multisignal(X,A, B, gamma1, gamma2):
     sum = WZ - A*arg2 + ((N-2)/2)*B*(arg3) + (1/(2*N-2))*B*arg4
     obj = cp.Minimize(sum)
     prob = cp.Problem(obj, con)
-    prob.solve(solver='CLARABEL')
+    prob.solve(solver='MOSEK')
 
     #Prune the matrix that is found as the solution
     return prune(W.value, 1e-6)
