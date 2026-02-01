@@ -43,8 +43,16 @@ for _ in range(5):
     G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
 
     A = prune(dg.graph_learning_gaussian(s, param)[0],1e-6)
+    #For some reason the graph has self loops, so we delete them
+    for i in range(N): A[i][i]=0
     
     G_new = nx.DiGraph(A)
+
+    # plt.figure("Original Graph")
+    # nx.draw(G,pos=nx.circular_layout(G))
+    # plt.figure("Learned Graph")
+    # nx.draw(G_new, pos=nx.circular_layout(G_new))
+    # plt.show()
 
     #Calculate f1 score. 
     TP = 0
