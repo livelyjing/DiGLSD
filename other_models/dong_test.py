@@ -27,8 +27,8 @@ recall_list=[]
 h_dists = []
 smooth = []
 
-#Find avg f1-score and hamming dist over 5 runs
-for _ in range(5):
+#Find avg f1-score and hamming dist over 50 runs
+for _ in range(50):
     N=20
 
     #In "Learning Laplacian Matrix in Smooth Graph Signal Representations"
