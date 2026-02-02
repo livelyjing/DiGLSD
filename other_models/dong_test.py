@@ -16,9 +16,10 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
+N=20
 q_e = 2
 sigma_e = 0.05
-mu = 10
+mu = 25
 m = 3
 
 f1_scores=[]
@@ -29,7 +30,6 @@ smooth = []
 
 #Find avg f1-score and hamming dist over 50 runs
 for _ in range(50):
-    N=20
 
     #In "Learning Laplacian Matrix in Smooth Graph Signal Representations"
     # these are the alpha,beta vals used for Barabási–Albert graphs: 0.0025, 0.050

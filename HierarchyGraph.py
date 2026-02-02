@@ -12,11 +12,11 @@ def Hierarchy_Graph(N,q,sigma,mu,m):
     while num_nodes<N:
         #Choose a random number, num_children, to represent the number of new 
         #nodes to add this round. If this num_children + num_nodes>N, ie adding 
-        #nodes would exceed N total nodes, add N-num_nodes nodes so instead
+        #nodes would exceed N total nodes, add N-num_nodes nodes instead
         num_children = random.randint(1, int(np.sqrt(N)+1))
         num_children = min(num_children, N-num_nodes)
 
-        #Add new nodes. The creates a new hierarchy below the current nodes in G
+        #Add new nodes. This creates a new hierarchy below the current nodes in G
         new_nodes = [num_nodes+i for i in range(num_children)]
         G.add_nodes_from(new_nodes)
         num_nodes += num_children

@@ -2,12 +2,10 @@ import sys
 sys.path.append("..")
 import HierarchyGraph as hg
 import Eval_Metrics as ev
+
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-
-
-
 
 def makeZ(X,N):
     res = []
@@ -54,12 +52,6 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
-N=20
-q_e = 2
-sigma_e = 0.05
-mu = 10
-m = 3
-
 f1_scores=[]
 precision_list=[]
 recall_list=[]
@@ -67,11 +59,10 @@ h_dists = []
 smooth = []
 pers = []
 
-
-for i in range(50):
+graphs = np.loadtxt("50_hgraph.csv")
+for i in range(1):
     G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
-    
-    z = makeZ(s,N)
+    z = makeZ(s,20)
 
     a=5
     b=0.54
