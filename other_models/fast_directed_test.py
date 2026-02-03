@@ -4,9 +4,11 @@ import HierarchyGraph as hg
 import Eval_Metrics as ev
 
 import numpy as np
+import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
+#A helper function for fast-directed model
 def makeZ(X,N):
     res = []
     for i in range(N):
@@ -15,6 +17,7 @@ def makeZ(X,N):
             else: res.append(np.sqrt(np.sum( (X[i]-X[j])**2) ) )
     return np.transpose(np.array(res))
 
+#The fixed point algo from page 3 of fast-directed paper
 def karaesi(a,b,z,N):
     J=np.ones((1,N-1))
     A = np.kron(np.identity(N),J)
@@ -41,7 +44,6 @@ def karaesi(a,b,z,N):
             else:
                 res[i][j] = w[count]
                 count += 1
-
     return res
 
 def prune(L, threshold):
@@ -52,6 +54,8 @@ def prune(L, threshold):
                 temp[i][j] = 0           
     return(temp)
 
+#Store metrics of each of 50 runs
+N=20
 f1_scores=[]
 precision_list=[]
 recall_list=[]
@@ -59,13 +63,19 @@ h_dists = []
 smooth = []
 pers = []
 
-graphs = np.loadtxt("50_hgraph.csv")
-for i in range(1):
-    G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
-    z = makeZ(s,20)
+#Extract the premade graphs
+graphs_50 = pd.read_csv("50_hgraphs.csv", names=range(20))
+graphs_50 = np.array(graphs_50)
+for i in range(50):
+    #Get the ith graph and signal
+    X = graphs_50[40*i:(40*(i)+20),0:3]
+    A_temp = graphs_50[40*(i)+20:40*(i+1)]
+    G = nx.from_numpy_array(A_temp, create_using=nx.DiGraph)
 
-    a=5
-    b=0.54
+    #hyperparams for fast-directed model
+    z = makeZ(X,N)
+    a=1
+    b=0.8
     A = prune(karaesi(a,b,z, N),1e-6)
     G_new = nx.from_numpy_array(A, create_using=nx.DiGraph)
 
@@ -95,9 +105,9 @@ for i in range(1):
     f1_scores.append(f1)
     precision_list.append(prec)
     recall_list.append(rec)
-    h_dists.append(ev.hamming(nx.to_numpy_array(G),A))
-    smooth.append(ev.smoothness(G_new,s))
-    pers.append(ev.Perseus_Measure(G_new,s))
+    h_dists.append(ev.hamming(A_temp,A))
+    smooth.append(ev.smoothness(G_new,X))
+    pers.append(ev.Perseus_Measure(G_new,X))
 
 f1_avg = np.average(f1_scores)
 f1_std = np.std(f1_scores)
