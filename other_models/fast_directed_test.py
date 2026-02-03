@@ -1,6 +1,5 @@
 import sys
 sys.path.append("..")
-import HierarchyGraph as hg
 import Eval_Metrics as ev
 
 import numpy as np
