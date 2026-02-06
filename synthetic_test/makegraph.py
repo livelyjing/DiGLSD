@@ -1,77 +1,9 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import csv
-import pandas as pd
-
-import HierarchyGraph as hg
-import optimization as op
-import Eval_Metrics as ev
-
-
-#The following code runs the learning model on Hierarchy graphs 50 times, and 
-# puts the results in a csv file. Below is the first row of the csv output
-output = [['attempt', 'Num nodes','q_e','sigma_e','Starting signal','Num observations', 'smoothness of org', 'pers of org',
-           'smoothness of learned', 'pers of learned', 'alpha','beta', 'gamma1', 'gamma2',
-           'Num correct in original', 'Num missed in original','Num correct in learned', 'Num extra edges in learned',
-           'Num edges in learned going wrong direction', 'f1 score']]
-for i in range(50):
-    #Set the parameters:
-    N = 25
-    q_e = 2
-    sigma_e = 0.05
-    mu = 10
-    m = 3
-
-    alpha = 0
-    beta = 0.02
-    gamma1=10
-    gamma2=0.5
-
-    #Make the graph+signals, then learn it
-    G,s = hg.gen(N,q_e,sigma_e,mu,m)
-    A = op.optimize_multisignal(s, alpha, beta, gamma1, gamma2)
-    G_2 = nx.from_numpy_array(A, create_using=nx.DiGraph)
-    M1 = len(G.edges)
-    M2 = len(G_2.edges)
-
-    #Calculate Eval Metrics
-    num_correct_org = 0
-    num_correct_new = 0
-    num_missed = 0
-    num_extra = 0
-    num_wrong_direction=0
-    colors = []
-    for (i,j) in G.edges:
-        if (i,j) in G_2.edges:
-            num_correct_org+=1
-        else:
-            num_missed+=1
-
-    for (i,j) in G_2.edges:
-        if (i,j) in G.edges:
-            num_correct_new+=1
-        else:
-            num_extra+=1
-            if (j,i) in G.edges and (j,i) not in G_2.edges:
-                num_wrong_direction+=1
-
-    #Add it to the CSV file
-    iter = [i,N,q_e,sigma_e,mu,m, ev.smoothness(G,s), ev.Perseus_Measure(G,s),
-            ev.smoothness(G_2,s), ev.Perseus_Measure(G_2,s), alpha, beta, gamma1, gamma2,
-            num_correct_org/M1, num_missed/M1, num_correct_new/M2, num_extra/M2,
-            num_wrong_direction/M2, 2*num_correct_org/(2*num_correct_org + num_extra + num_missed)]
-    output.append(iter)
-
-#The 'a' keyword means if the csv file is nonempty, it appends the output to
-#the bottom of the file, instead of overwriting it. So make sure to delete the csv whenever you're starting over
-with open('synthetic_res.csv', 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerows(output)
-
 #The code below takes a finished csv file and produces the plots. When we did
 #this in the collab we ran it a cell at a time, so maybe we comment out the below
 #code until after the above code is run a few times
 #-------------------------------------------------------------------------------
+
+
 #f1vsnodes (changed the nodes range:5-50 w/ specific parameters)
 import pandas as pd
 import matplotlib.pyplot as plt
