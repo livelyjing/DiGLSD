@@ -9,7 +9,7 @@ def smoothness(G,X):
         s = X[:,k]
         for (i,j) in G.edges:
             res += ((s[i]-s[j])**2)
-    return res/m  
+    return res/(m*len(G.edges))  
 
 #Preseus Measure is a metric for how well a graph follows Directional Flow
 def Perseus_Measure(G,X):
