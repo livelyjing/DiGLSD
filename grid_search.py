@@ -11,7 +11,7 @@ grid_search=dict()
 print("begin grid search.")
 output=[['Num nodes','alpha','beta','gamma1','gamma2', 'average f1 over 50 runs']]
 
-for N in [50]:
+for N in [25]:
     a_opt = None
     b_opt = None
     g1_opt = None
@@ -66,7 +66,7 @@ for N in [50]:
 
 print(grid_search)
 output.append(['Optimal vals below'])
-for N in [50]: 
+for N in [25]: 
     (a_opt,b_opt,g1_opt,g2_opt, f1_opt) = grid_search[N]
     output.append([N,a_opt,b_opt,g1_opt,g2_opt, f1_opt])
 
