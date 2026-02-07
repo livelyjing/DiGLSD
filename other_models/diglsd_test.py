@@ -9,7 +9,7 @@ import networkx as nx
 
 #Store metrics of each of 50 runs and set hpyer params according to grid search
 N=20
-a,b,gamma1,gamma2=0.2,0.45,11,0.6
+a,b,gamma1,gamma2=0.2,0.25,9,0.5
 
 f1_scores=[]
 precision_list=[]
