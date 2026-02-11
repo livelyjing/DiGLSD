@@ -15,14 +15,14 @@ import Eval_Metrics as ev
 output = []
 # output.append(['Num nodes','q_e','sigma_e','Starting signal','Num observations', 'smoothness of org', 'pers of org',
 #            'smoothness of learned', 'pers of learned', 'alpha','beta', 'gamma1', 'gamma2',
-#            'precision','recall','SHD' 'f1 score', 'f1 standard devitation'])
+#            'precision','recall','SHD','f1 score', 'f1 standard devitation'])
 
-N=50
-q_e = 2
+N=20
 sigma_e = 0.05
 mu = 10
 m = 3
-a,b,gamma1,gamma2=0.2,0.15,11,0.4
+q_e = 2
+a,b,gamma1,gamma2=1.2,0.05,10,0.5
 
 f1_scores=[]
 precision_list=[]
@@ -84,7 +84,7 @@ output.append(iter)
 
 #The 'a' keyword means if the csv file is nonempty, it appends the output to
 #the bottom of the file, instead of overwriting it. So make sure to delete the csv whenever you're starting over
-with open('Nxf1.csv', 'a', newline='') as csvfile:
+with open('qxf1.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(output)
 
