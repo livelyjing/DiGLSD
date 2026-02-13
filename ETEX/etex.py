@@ -85,3 +85,6 @@ for src, dst in G_2.edges:
     transform=ccrs.PlateCarree())
 
 plt.show()
+
+# Got smooth: 0.43898404255319157
+# pers: 0.40425531914893614
