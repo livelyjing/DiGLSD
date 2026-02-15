@@ -28,7 +28,8 @@ for row in data:
 #print(X)
 #Learn graph
 #12 nodes, largest signal is 3, with signals appearing to be spaced by 0.5
-A = op.optimize_multisignal(X, 0.4, 0.05, 10,0.5)
+#0.4, 0.05, 10,0.5
+A = op.optimize_multisignal(X, 0.01, 0.05, 10,0.5)
 G_2 = nx.from_numpy_array(A, create_using=nx.DiGraph)
 print(f"smooth: {ev.smoothness(G_2,np.array(X))}\n")
 print(f"pers: {ev.Perseus_Measure(G_2,X)}")
