@@ -14,6 +14,11 @@ output=[['Num nodes','alpha','beta','gamma1','gamma2', 'average f1 over 50 runs'
 #Choose values of N to test, and how many iterations per hyperpamater tuple are to be tested
 vals_to_test = [60,80,100]
 iters = 50
+ #Set the parameters for the random graph
+q_e = 2
+sigma_e = 0.05
+mu = 10
+m = 3
 
 for N in vals_to_test:
     a_opt = None
@@ -31,12 +36,6 @@ for N in vals_to_test:
                     #Find average f1 score over 50 runs
                     f1_score_sum=0
                     for i in range(iters):
-                        #Set the parameters for the random graph
-                        q_e = 2
-                        sigma_e = 0.05
-                        mu = 10
-                        m = 3
-
                         #Make the graph+signals, then learn it
                         G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
                         #If solver cant solve it we return an f1 score of 0

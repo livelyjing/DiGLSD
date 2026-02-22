@@ -7,33 +7,38 @@
 #f1vsnodes (changed the nodes range:5-50 w/ specific parameters)
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-# df = pd.read_csv("Nxf1.csv")
+df = pd.read_csv("Nxf1.csv")
 
-# df["Num nodes"] = pd.to_numeric(df["Num nodes"], errors="coerce")
-# df["f1 score"] = pd.to_numeric(df["f1 score"], errors="coerce")
-# df["precision"] = pd.to_numeric(df["precision"], errors="coerce")
-# df["recall"] = pd.to_numeric(df["recall"], errors="coerce")
+df["Num nodes"] = pd.to_numeric(df["Num nodes"], errors="coerce")
+df["f1 score"] = pd.to_numeric(df["f1 score"], errors="coerce")
+df["precision"] = pd.to_numeric(df["precision"], errors="coerce")
+df["recall"] = pd.to_numeric(df["recall"], errors="coerce")
 
 
-# plt.figure(figsize=(8, 5))
+plt.figure(figsize=(8, 5))
 
-# plt.plot(df["Num nodes"], df["f1 score"],
-#          marker='o', linestyle='-', color='blue', label="Average F1")
+plt.plot(df["Num nodes"], df["f1 score"],
+         marker='o', linestyle='-', color='blue', label="Average F1")
 
-# plt.plot(df["Num nodes"], df["precision"],
-#          marker='s', linestyle='--', color='green', label="Average Precision")
+plt.plot(df["Num nodes"], df["precision"],
+         marker='s', linestyle='--', color='green', label="Average Precision")
 
-# plt.plot(df["Num nodes"], df["recall"],
-#          marker='^', linestyle='-.', color='red', label="Average Recall")
+plt.plot(df["Num nodes"], df["recall"],
+         marker='^', linestyle='-.', color='red', label="Average Recall")
 
-# plt.xlabel("Number of Nodes")
-# plt.ylabel("Score")
-# plt.grid(True)
-# plt.legend()
-# plt.tight_layout()
-# plt.show()
+tick_locations = np.arange(10, 51, 5) 
+tick_locations = np.concatenate((tick_locations,np.array([60,80,100])))
+plt.xticks(tick_locations)
+
+plt.xlabel("Number of Nodes")
+plt.ylabel("Score")
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
 
 #-------------------------------------------------------------------------------
 #change num of obv(m) range : 3-140
@@ -96,25 +101,25 @@ import matplotlib.pyplot as plt
 
 # #-------------------------------------------------------------------------------
 # #Smoothness difference and perseus difference vs #of nodes
-df = pd.read_csv('Nxf1.csv')
+# df = pd.read_csv('Nxf1.csv')
 
-df["smoothness of learned"] = pd.to_numeric(df["smoothness of learned"], errors="coerce")
-df["smoothness of org"] = pd.to_numeric(df["smoothness of org"], errors="coerce")
-df["pers of learned"] = pd.to_numeric(df["pers of learned"], errors="coerce")
-df["pers of org"] = pd.to_numeric(df["pers of org"], errors="coerce")
-df["Num nodes"] = pd.to_numeric(df["Num nodes"], errors="coerce")
+# df["smoothness of learned"] = pd.to_numeric(df["smoothness of learned"], errors="coerce")
+# df["smoothness of org"] = pd.to_numeric(df["smoothness of org"], errors="coerce")
+# df["pers of learned"] = pd.to_numeric(df["pers of learned"], errors="coerce")
+# df["pers of org"] = pd.to_numeric(df["pers of org"], errors="coerce")
+# df["Num nodes"] = pd.to_numeric(df["Num nodes"], errors="coerce")
 
-df['smoothness diff'] = df['smoothness of learned'] - df['smoothness of org']
-df['perseus diff'] = df['pers of learned'] - df['pers of org']
+# df['smoothness diff'] = df['smoothness of learned'] - df['smoothness of org']
+# df['perseus diff'] = df['pers of learned'] - df['pers of org']
 
-plt.figure(figsize=(10, 6))
-plt.plot(df['Num nodes'], df['smoothness diff'], label='Smoothness Difference', marker='o')
-plt.plot(df['Num nodes'], df['perseus diff'], label='Perseus Difference', marker='s')
+# plt.figure(figsize=(10, 6))
+# plt.plot(df['Num nodes'], df['smoothness diff'], label='Smoothness Difference', marker='o')
+# plt.plot(df['Num nodes'], df['perseus diff'], label='Perseus Difference', marker='s')
 
 
-plt.xlabel('Number of Nodes')
-plt.ylabel('Difference')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+# plt.xlabel('Number of Nodes')
+# plt.ylabel('Difference')
+# plt.legend()
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
