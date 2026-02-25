@@ -27,9 +27,9 @@ for row in data:
         X.append(np.array(p))
 #print(X)
 #Learn graph
-#12 nodes, largest signal is 3, with signals appearing to be spaced by 0.5
+#12 nodes, largest signal is 3, with signals appearing to be spaced by 0.5. Want like 12-20 edges
 #0.4, 0.05, 10,0.5
-A = op.optimize_multisignal(X, 0.01, 0.05, 10,0.5)
+A = op.optimize_multisignal(X, 0.05, 0.2, 10,0.5)
 G_2 = nx.from_numpy_array(A, create_using=nx.DiGraph)
 print(f"smooth: {ev.smoothness(G_2,np.array(X))}\n")
 print(f"pers: {ev.Perseus_Measure(G_2,X)}")
@@ -84,6 +84,28 @@ for src, dst in G_2.edges:
     head_width=0.1, color=col,
     length_includes_head=True,
     transform=ccrs.PlateCarree())
+
+#edges for k=5 ground truth:
+gt_edges = [(0, 1), (0, 3), (0, 5), (1, 3), (1, 5), (2, 1), (2, 3), (2, 4), (2, 5), (2, 9), (3, 5), (4, 1), (4, 3), (4, 8), (6, 7), (6, 9), (6, 10), (6, 12), (7, 8), (7, 9), (8, 3), (9, 1), (9, 3), (9, 4), (9, 8), (10, 7), (10, 9), (11, 6), (11, 7), (11, 9), (11, 10), (11, 12), (12, 7), (12, 9), (12, 10)]
+#for k=4:
+#gt_edges = [(0, 1), (0, 3), (0, 5), (1, 3), (1, 5), (2, 1), (2, 4), (2, 5), (2, 9), (3, 5), (4, 1), (4, 8), (6, 7), (6, 10), (6, 12), (7, 8), (9, 1), (9, 4), (9, 8), (10, 7), (11, 6), (11, 7), (11, 10), (11, 12), (12, 7), (12, 10)]
+#for k=3:
+#gt_edges = [(0, 1), (0, 3), (0, 5), (1, 3), (1, 5), (2, 1), (2, 4), (2, 9), (3, 5), (4, 8), (6, 10), (6, 12), (7, 8), (9, 4), (9, 8), (10, 7), (11, 6), (11, 10), (11, 12), (12, 7), (12, 10)]
+
+#Calculate f1 score
+TP = 0
+FN = 0
+FP = 0
+for (i,j) in gt_edges:
+    if (i,j) in G_2.edges:
+        TP+=1
+    else:
+        FN+=1
+for (i,j) in G_2.edges:
+    if (i,j) not in gt_edges:
+        FP+=1
+f1= (2*TP)/((2*TP) + FP + FN)
+print(f1,TP,FN,FP)
 
 plt.show()
 

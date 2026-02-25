@@ -18,10 +18,12 @@ sigma_e = 2
 mu = 66
 m = 3
 
-G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
-G = delete(G,.25)
+# G,s = hg.Hierarchy_Graph(N,q_e,sigma_e,mu,m)
+# G = delete(G,.25)
+G,s = hg.Hierarchy_Graph(12,0.5,.2,2.5,2)
 
-A= op.optimize_multisignal(s, 0.001, 0.17, 10,.5)   
+#A= op.optimize_multisignal(s, 0.001, 0.17, 10,.5)
+A= op.optimize_multisignal(s, 0.1, 0.17, 10,.5)   
 G_2 = nx.from_numpy_array(A, create_using=nx.DiGraph)
 
 #Calculate f1 score
