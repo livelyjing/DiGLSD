@@ -12,13 +12,13 @@ print("begin grid search.")
 output=[['Num nodes','alpha','beta','gamma1','gamma2', 'average f1 over 50 runs']]
 
 #Choose values of N to test, and how many iterations per hyperpamater tuple are to be tested
-vals_to_test = [13]
-iters = 25
+vals_to_test = [30,35,40,45,50]
+iters = 50
  #Set the parameters for the random graph
-q_e = 0.5
-sigma_e = 0.2
-mu = 2.5
-m = 2
+q_e = 2
+sigma_e = 0.05
+mu = 10
+m = 3
 
 for N in vals_to_test:
     a_opt = None
@@ -28,8 +28,8 @@ for N in vals_to_test:
     f1_opt=0
     print(N)
     #test possible alpha,beta,gamma1,gamma2, combinations
-    for a in np.arange(0, 0.51, 0.05):
-        for b in np.arange(0,0.51,0.05):
+    for a in np.arange(0, 1.51, 0.05):
+        for b in np.arange(0,0.11,0.01):#for b in np.arange(0,0.51,0.05):
             for gamma1 in [10]:
                 for gamma2 in [0.5]:
                     print(f"{N,a,b,gamma1,gamma2}")

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-df = pd.read_csv("Nxf1.csv")
+df = pd.read_csv("Nxf1_2.csv")
 
 df["Num nodes"] = pd.to_numeric(df["Num nodes"], errors="coerce")
 df["f1 score"] = pd.to_numeric(df["f1 score"], errors="coerce")
