@@ -17,8 +17,8 @@ output = []
 #            'smoothness of learned', 'pers of learned', 'alpha','beta', 'gamma1', 'gamma2',
 #            'precision','recall','SHD','f1 score', 'f1 standard devitation'])
 
-N=25
-a,b,gamma1,gamma2=1.2,0.05,10,0.5
+N=50
+a,b,gamma1,gamma2=1.45,0.03,10,0.5
 sigma_e = 0.05
 mu = 10
 m = 3
