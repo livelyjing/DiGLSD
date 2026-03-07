@@ -40,31 +40,29 @@ def Graph_Compare(G,G_2, X):
     M2 = len(G_2.edges)
 
     #Calculate Eval Metrics
-    num_correct_org = 0
-    num_correct_new = 0
-    num_missed = 0
-    num_extra = 0
+    TP = 0
+    FN = 0
+    FP = 0
     num_wrong_direction=0
     for (i,j) in G.edges:
-        if (i,j) in G_2.edges: 
-            num_correct_org+=1
-        else: 
-            num_missed+=1
+        if (i,j) in G_2.edges:
+            TP+=1
+        else:
+            FN+=1
     for (i,j) in G_2.edges:
-        if (i,j) in G.edges: 
-            num_correct_new+=1
-        else: 
-            num_extra+=1
-            if (j,i) in G.edges and (j,i) not in G_2.edges:
+        if (i,j) not in G.edges:
+            FP+=1
+            if (j,i) in G.edges:
                 num_wrong_direction+=1
-
+    
+    f1= (2*TP)/((2*TP) + FP + FN)             
     #Compile Metrics
     res1 = [['Smoothness of Original Graph', 'Perseus Measure of Original Graph', 
            'Smoothness of Learned Graph', 'Perseus Measure of Original Graph', 
-           'Recall', 'Fase Negative Rate','Precision', 'False Positive Rate', 
+           'Recall', 'Precision',  
            'Percentage of edges in Learned Graph Going Wrong Direction', 'F1 score']]
     res2 = [smoothness(G,X), Perseus_Measure(G,X),
             smoothness(G_2,X), Perseus_Measure(G_2,X),
-            num_correct_org/M1, num_missed/M1, num_correct_new/M2, num_extra/M2, 
-            num_wrong_direction/M2, 2*num_correct_org/(2*num_correct_org + num_extra + num_missed)]
+            TP/(TP+FN), TP/(TP+FP),
+            num_wrong_direction/M2, f1]
     return zip(res1, res2)
